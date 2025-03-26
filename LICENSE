@@ -19,3 +19,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+### Third-Party Libraries
+
+This SDK makes use of third-party libraries, including:
+
+- **FreeImage** (https://freeimage.sourceforge.io/)
+
+FreeImage is licensed under the **FreeImage Public License (FIPL)**.  
+You can obtain the full source code of FreeImage at:  
+[https://sourceforge.net/projects/freeimage/](https://sourceforge.net/projects/freeimage/)
+
+Use of FreeImage within this SDK is compliant with its license requirements.  
+If you distribute this SDK with FreeImage, please ensure compliance with the FreeImage Public License.
+

@@ -8,6 +8,7 @@ StreamDock293::StreamDock293(const std::shared_ptr<TranSport> &transport, struct
     setBgiFormat(800, 480);
     setRotate(180.0f, 0.0f);
     setFlipHorizonal(true, false);
+    setKeyRange(1, 15);
 }
 
 StreamDock293::~StreamDock293()

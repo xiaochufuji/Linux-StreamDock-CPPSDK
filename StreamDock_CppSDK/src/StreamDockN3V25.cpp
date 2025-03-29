@@ -5,6 +5,7 @@ StreamDockN3::StreamDockN3(const std::shared_ptr<TranSport> &transport, struct h
 	setKeyFormat(64, 64);
 	setBgiFormat(320, 240);
 	setRotate(-90.0f, -90.0f);
+	setKeyRange(1, 6);
 }
 
 StreamDockN3::~StreamDockN3()

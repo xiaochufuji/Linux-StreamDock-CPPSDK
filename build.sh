@@ -1,4 +1,9 @@
 #!/bin/bash
+# 删除旧的可执行文件（如果存在）
+if [ -f ./bin/main ]; then
+    echo "Removing existing ./bin/main..."
+    rm ./bin/main
+fi
 # Step 1: 创建 build 文件夹
 mkdir -p build
 # Step 2: 执行 make clean（如果已有构建文件）

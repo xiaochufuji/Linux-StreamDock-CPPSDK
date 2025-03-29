@@ -21,14 +21,18 @@ public:
 	virtual ~StreamDock();
 	std::vector<unsigned char> getFirmVersion(int length);
 	int open(bool auto_read = false);
+	virtual void init(int brightness = 100);
 	int disconnected();
 	std::vector<unsigned char> read();
+	static std::string parseRead(const std::vector<unsigned char>& readVec);
 	int setBrightness(int percent);
 	int refresh();
 	std::string getPath();
 	int wakeScreen();
 	virtual int clearIcon(int index);
 	virtual int clearAllIcon();
+	// only override by StreamDockN1
+	virtual int switchMode(N1MODE mode);
 
 	/*  usage:
 		s->setBackgroundImg("./img/bg.jpg");
@@ -61,10 +65,15 @@ public:
 
 protected:
 	void setKeyFormat(unsigned int width, unsigned int height);
+	void setKeyFormat_secondScreen(unsigned int width, unsigned int height);
 	void setBgiFormat(unsigned int width, unsigned int height);
 	void setRotate(float kyAngle, float bgAngle);
 	void setFlipHorizonal(bool bgFlip, bool keyFlip);
 	void setFlipVertical(bool bgFlip, bool keyFlip);
+	void setKeyRange(unsigned int minKeyNum, unsigned int maxKeyNum);
+	void setKeySecondScreenRange(unsigned int minKeyNum, unsigned int maxKeyNum);
+	bool isKeyNormal(unsigned int key);
+	bool isKeySecondScreen(unsigned int key);
 
 public:
 	std::shared_ptr<TranSport> transport;
@@ -75,12 +84,18 @@ protected:
 	unsigned int bg_height = 480;
 	unsigned int ky_width = 100;
 	unsigned int ky_height = 100;
+	unsigned int ky_width_secondScreen = 100;
+	unsigned int ky_height_secondScreen = 100;
 	bool flipBgHorizonal = false;
 	bool flipBgVertical = false;
 	bool flipKyHorizonal = false;
 	bool flipKyVertical = false;
 	float kyRotateAngle = 0.0f;
 	float bgRotateAngle = 0.0f;
+	unsigned int maxKey = 0;
+	unsigned int minKey = 0;
+	unsigned int maxSecondKey = 0;
+	unsigned int minSecondKey = 0;
 };
 
 class PicHelper
@@ -88,4 +103,51 @@ class PicHelper
 public:
 	static void toNativeBackground(fipImage &img, StreamDock *dock);
 	static void toNativeKeyImage(fipImage &img, StreamDock *dock);
+	static void toNativeKeyImage_secondScreen(fipImage& img, StreamDock* dock);
+};
+
+class joining_thread {
+	std::thread  _t;
+public:
+	joining_thread() noexcept = default;
+	template<typename Callable, typename ...  Args>
+	explicit  joining_thread(Callable&& func, Args&& ...args) :
+		_t(std::forward<Callable>(func), std::forward<Args>(args)...) {
+	}
+	explicit joining_thread(std::thread t) noexcept : _t(std::move(t)) {}
+	joining_thread(joining_thread&& other) noexcept : _t(std::move(other._t)) {}
+	joining_thread& operator=(joining_thread&& other) noexcept
+	{
+		if (joinable()) {
+			join();
+		}
+		_t = std::move(other._t);
+		return *this;
+	}
+	~joining_thread() noexcept {
+		if (joinable()) {
+			join();
+		}
+	}
+	void swap(joining_thread& other) noexcept {
+		_t.swap(other._t);
+	}
+	std::thread::id   get_id() const noexcept {
+		return _t.get_id();
+	}
+	bool joinable() const noexcept {
+		return _t.joinable();
+	}
+	void join() {
+		_t.join();
+	}
+	void detach() {
+		_t.detach();
+	}
+	std::thread& as_thread() noexcept {
+		return _t;
+	}
+	const std::thread& as_thread() const noexcept {
+		return _t;
+	}
 };

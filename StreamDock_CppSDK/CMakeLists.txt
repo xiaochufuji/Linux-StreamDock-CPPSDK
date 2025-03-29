@@ -6,24 +6,16 @@ option(COMPLIE_TRANSPORT_SRC "if complie transport lib by source code force?" OF
 
 # transport库文件绝对路径
 set(TRANSPORT_LIB_PATH ${TRANSPORT_OUTPUT_PATH}/${TRANSPORT_LIB_NAME})
+if(COMPLIE_TRANSPORT_SRC AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/transport")
+    message(STATUS "Building transport from source: ${TRANSPORT_LIB_PATH}")
+    add_subdirectory(transport)
+else()
+    message(STATUS "Skipping transport source compile.")
+endif()
 
-# 判断 transport库是否已编译, 已编译(对外)
-# if (EXISTS ${TRANSPORT_LIB_PATH})
-#     message(STATUS "Using prebuilt transport library: ${TRANSPORT_LIB_PATH}")
-#     set(TRANSPORT_LIB ${TRANSPORT_LIB_PATH})
-# else()
-#   message(STATUS "Building transport from source: ${TRANSPORT_LIB_PATH}")
-#   add_subdirectory(transport)
-#   set(TRANSPORT_LIB ${TRANSPORT_LIB_NAME}) 
-# endif()
-
-# we use, 执行build.sh, 生成libtransport.so, 拷贝走，然后就行了
-# add_subdirectory(transport)
-
-# user use
 set(TRANSPORT_LIB ${TRANSPORT_LIB_PATH})
 message(STATUS ${TRANSPORT_LIB_PATH})
-if (EXISTS ${TRANSPORT_LIB})
+if ( EXISTS ${TRANSPORT_LIB})
     message("-- link ${TRANSPORT_LIB_NAME} in ${TRANSPORT_LIB} success!")
 endif()
 

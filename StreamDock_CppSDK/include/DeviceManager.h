@@ -21,7 +21,7 @@ public:
 
 private:
 	std::future<void> m_future;
-	std::atomic<bool> isListening{ false };
+	std::atomic<bool> isListening = false;
 #ifdef __linux__
 	std::unordered_map<std::string, std::string> m_devnodeToPath;
 #endif

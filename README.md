@@ -391,9 +391,14 @@ If no devices are found, refer to [4.2 Device Not Found](#42-device-not-found-fi
   ```cpp
   Transport::stopAutoRead();
   ```
+- `init()`
+  This function serves as an all-in-one interface for automatic wake-up, screen   clearing, brightness setting, and refreshing.
+  It is typically used after the `open()` function.
 - `asyncListen()`
   Starts a background thread to monitor device plug/unplug.
   It internally calls `DeviceManager::listen()`.
+- `joining_thread` class
+  This class automatically joins a newly created thread within the current scope, saving you from having to manually manage the thread's lifecycle.
 - `listen(bool autoReconnect = false)`
   If `autoReconnect = true`, it will auto-call `open()` and `wakeScreen()` on insert.
   You can add custom reconnection logic at:

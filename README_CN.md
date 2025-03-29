@@ -344,30 +344,32 @@ void test4(const std::shared_ptr<StreamDock> &s, bool test)
 int main()
 {
     std::unique_ptr<DeviceManager> manager(new DeviceManager());
-    auto streamDocks = manager->enumerate();
-    std::cout << "find [" << streamDocks.size() << "] device" << "\n";
-    manager->asyncListen();
-
-    for (auto it = streamDocks.begin(); it != streamDocks.end(); it++)
-    {
-        auto s = it->second;
-        s->open(AUTOREAD);
-        s->wakeScreen();
-        s->setBrightness(100);
-
-        test1(s, true);
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        test2(s, true);
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        test3(s, true);
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        test4(s, true);
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(1000)); // 保持程序运行
+	  auto streamDocks = manager->enumerate();
+	  std::cout << "find [" << streamDocks.size() << "] device" << "\n";
+	  manager->asyncListen();
+	  joining_thread j;
+	  for (auto it = streamDocks.begin(); it != streamDocks.end(); it++)
+	  {
+	  	// get device manager instance
+	  	auto s = it->second;
+	  	s->open();
+	  	s->init();
+	  	j = joining_thread(std::thread([](decltype(s) st) {
+	  		while (1)
+	  		{
+	  			auto a = st->read();
+	  			auto str = StreamDock::parseRead(a);
+	  			if (!str.empty()) std::cout << str << std::endl;
+	  		}
+	  		}, s));
+	  	test1(s, true);
+	  	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	  	test2(s, true);
+	  	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	  	test3(s, true);
+	  	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	  	test4(s, true);
+	  }
 }
 ```
 
@@ -386,6 +388,9 @@ int main()
     ```cpp
     Transport::stopAutoRead();
     ```
+* `init()`
+  该函数是自动唤醒、清屏、设置亮度、刷新一体的函数接口
+  通常可以用于`open()`函数之后
 * `asyncListen()`
   该函数会启动异步设备监听，用于检测设备的插拔操作。
   实际上是启动了一个线程调用了 `DeviceManager::listen()` 函数。
@@ -393,7 +398,8 @@ int main()
     ```cpp
     int listen(bool autoReconnect = false);
     ```
-
+* `joining_thread`类
+  这个类自动帮助你在当前作用域将新开辟的线程join而无需太多关注线程的生命周期
 * 当 `autoReconnect = true` 时，监听到插入新设备后会自动执行 `open()` 和 `wakeScreen()`，在`open()`和`wakeup()`之后还有一行注释，你可以在此处增加你自己的重连后的逻辑；
     ```cpp
     // reconnect and do something here, like launch a singal to call a function

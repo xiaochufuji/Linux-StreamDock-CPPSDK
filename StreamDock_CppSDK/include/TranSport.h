@@ -6,6 +6,12 @@
 #include <vector>
 #include <future>
 
+enum class N1MODE {
+	KEYBOARD_MODE,
+	CALCULATOR_MODE,
+	SOFTWARE_MODE
+};
+
 enum class ErrorCode
 {
 	UnKnown,
@@ -117,7 +123,7 @@ public:
 	void close();
 	ErrorCode code() const;
 	HidStatus status() const;
-
+	int switchMode(N1MODE mode);
 private:
 	hid_device *handle = nullptr;
 	HidStatus m_status = HidStatus::Exited;

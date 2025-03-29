@@ -10,3 +10,5 @@ project ("StreamDock_CppSDK")
 
 # 包含子项目。
 add_subdirectory ("StreamDock_CppSDK")
+
+# 下一个版本增加transport任务队列

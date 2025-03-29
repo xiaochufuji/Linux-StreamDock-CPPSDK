@@ -5,6 +5,7 @@ StreamDock293V3::StreamDock293V3(const std::shared_ptr<TranSport> &transport, st
     setKeyFormat(112, 112);
     setBgiFormat(800, 480);
     setRotate(180.0f, 180.0f);
+    setKeyRange(1, 15);
 }
 
 StreamDock293V3::~StreamDock293V3()
